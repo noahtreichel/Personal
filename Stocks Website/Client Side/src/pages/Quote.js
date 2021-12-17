@@ -1,0 +1,81 @@
+import React, { useState, useEffect } from 'react';
+import { Navbar, Nav, NavLink, NavItem } from 'reactstrap';
+import { useParams } from 'react-router-dom';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css'; 
+
+
+function Quote(props) {
+  const [rowData, setRowData] = useState([]);
+
+  const columns = [
+    { headerName: 'Name', field: 'name' },
+    { headerName: 'Symbol', field: 'symbol' },
+    { headerName: 'Industry', field: 'industry', filter: true },
+    { headerName: 'Open', field: 'open' },
+    { headerName: 'High', field: 'high' },
+    { headerName: 'Low', field: 'low' },
+    { headerName: 'Close', field: 'close' },
+    { headerName: 'Volumes', field: 'volumes' }
+  ];
+
+  let {symbol} = useParams();
+  const [rowSymbol, setRowSymbol] = useState(symbol);
+  let url = `http://131.181.190.87:3000/stocks/${rowSymbol}`;
+
+  useEffect(() => {
+    fetch(url)
+    .then((response) => response.json())
+    .then(stocks => { setRowData([stocks])
+    });
+  }, [symbol, url]);
+
+
+  return (
+    <div className='App-header'>
+      <div>
+        <Navbar expand='md'>
+          <Nav className='Navbar' navbar>            
+            <NavItem className='line'>
+              <NavLink style={{ color:'white' }} href='/'>Home</NavLink>
+            </NavItem>
+            <NavItem className='line'>
+              <NavLink style={{ color:'white' }} href='/quote'>Quote</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink style={{ color:'white' }} href='/price_history'>Price History (restricted)</NavLink>
+            </NavItem>
+            <NavItem className='navbar-space-right'>
+              <NavLink className='line' style={{ color:'white'}} href='/login'>Login</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink style={{ color:'white' }} href='/login'>Register</NavLink>
+            </NavItem>            
+          </Nav>
+        </Navbar>
+      </div>
+      <div className='container'>
+        <br></br>
+        <div
+        className='ag-theme-balham'
+        style= {{ height: '300px', width: '1000px' }}>
+          <h6 style={{ color:'yellow' }}>
+            Search by <u>stock symbol</u> to get a quote
+          </h6>
+          <br></br>
+          <input 
+            value={rowSymbol}
+            onChange={(e) => setRowSymbol(e.target.value)}
+            placeholder= "Search stock symbol..." >
+          </input>
+          <AgGridReact
+          columnDefs={columns}
+          rowData={rowData} />
+        </div>                     
+      </div>
+    </div>    
+  );
+}
+
+export default Quote;
