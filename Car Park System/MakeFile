@@ -1,3 +1,0 @@
-gcc -o simulator simulator.c linkedList.c -lrt -lpthread;
-gcc -o manager manager.c hashTable.c -lrt -lpthread;
-gcc -o fire_alarm fire_alarm.c -lrt -lpthread;
